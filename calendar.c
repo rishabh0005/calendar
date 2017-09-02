@@ -1,10 +1,11 @@
-//this program runs on linux only because it contains system calls
+//this progran runs of linux
 //program to make a calendar with additional options
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
 #define zero 0
 
+int republicDay=26, independenceDay=15, gandhiJayanti=2, ans;
 int dateMonthDisplay, dateInMonthCalculate;
 
 void clearScreen()
@@ -109,7 +110,13 @@ void whichMonth(int m)     //to display month name
 
 void displayDayOnParticularDate(int month, int year, int caseDependent)   //to calculate day name on particular date by zeller algorithm
 {
-   int mdummy,ydummy,date = 1,ans;
+   int mdummy,ydummy,date = 1;
+   if(caseDependent == 2)
+      date = republicDay;
+   else if(caseDependent == 3)
+      date = independenceDay;
+   else if(caseDependent == 4)
+      date = gandhiJayanti;   
    mdummy = month;
    ydummy = year; 
       
@@ -140,7 +147,7 @@ void displayDayOnParticularDate(int month, int year, int caseDependent)   //to c
       
    ans = ((int)((13*month-1)/5)+date+(year%100)+(int)((year%100)/4)-2*(int)(year/100)+(int)(year/400)+77)%7;               //zeller algorithm
 
-   if(caseDependent == 1)
+   if(caseDependent == 1 )
    {
       if(date == 1 || date == 21)
          printf("\n The day on %dst ",date);
@@ -154,7 +161,9 @@ void displayDayOnParticularDate(int month, int year, int caseDependent)   //to c
       printf(" %d = ",ydummy);
       whichDay(ans);
    }
-   
+     
+   else if(caseDependent == 2 || caseDependent == 3 || caseDependent == 4)
+      return;
    
    else
    {  
@@ -178,7 +187,6 @@ void getMonthName(int ch)
 {
    int mon, year;
    clearScreen();
-   printf("\n This calendar works for year between 1952 and 4902.");
    printf("\n Enter the year : ");
    scanf("%d",&year);
    if(year < 100)
@@ -201,7 +209,38 @@ void getMonthName(int ch)
    }
 }
 
+void displayMessageOfNationalHoliday(int date, int month, int year)
+{
+   if(date == 1 || date == 21)
+      printf(" is on %dst ",date);
+   else if(date == 2 || date == 22)
+      printf(" is on %dnd",date);  
+   else if(date == 3 || date == 23)
+      printf(" is on %drd",date);
+   else
+      printf(" is on %dth of",date); 
+   whichMonth(month);
+   printf(" %d = ",year);
+   whichDay(ans);
+}
 
+
+void nationalHoliday()
+{
+   int year;
+   clearScreen();
+   printf("\n Enter the year whose national holiday you wish to see : ");
+   scanf("%d",&year);
+   printf("\nRepublic day = ");
+   displayDayOnParticularDate(1,year,2);
+   displayMessageOfNationalHoliday(republicDay, 1, year);
+   printf("\nIndependence day = ");
+   displayDayOnParticularDate(8,year,3);
+   displayMessageOfNationalHoliday(independenceDay, 8, year);
+   printf("\nGandhi Jayanti = ");
+   displayDayOnParticularDate(10,year,4);
+   displayMessageOfNationalHoliday(gandhiJayanti, 10, year);
+}
 
 
 void choiceExecution()
@@ -220,7 +259,7 @@ void choiceExecution()
          case 2 :getMonthName(1);
                  break;
                 
-         case 3 : 
+         case 3 :nationalHoliday();
                  break;
                  
          case 4 : 
@@ -243,7 +282,8 @@ void choiceExecution()
 
 
 int main()
-{
+{  
+   printf("\n This calendar works for year between 1952 and 4902.");
    choiceExecution();
    return zero;
 }
