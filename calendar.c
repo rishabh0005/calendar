@@ -3,7 +3,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<string.h>
 #define zero 0
+#define max 140
+
+struct reminder
+{
+   int d,y,m;
+   char message[max];
+}one;
 
 int republicDay=26, independenceDay=15, gandhiJayanti=2, ans;
 int dateMonthDisplay, dateInMonthCalculate;
@@ -49,7 +57,8 @@ void choiceDisplay()       //to display choices
    printf("Press 2 to view which day on particular date.\n");
    printf("Press 3 to view national holidays.\n");
    printf("Press 4 to add a reminder to a particular date.\n");
-   printf("Press 5 to exit.\n");
+   printf("Press 5 to view added reminders to a particular date.\n");
+   printf("Press 6 to exit.\n");
 }
 
 int choiceSelector()       //to take user choice
@@ -242,6 +251,85 @@ void nationalHoliday()
    displayMessageOfNationalHoliday(gandhiJayanti, 10, year);
 }
 
+void addReminder()
+{
+   FILE *fp = NULL;
+   char ch = ' ';
+   int i;
+   clearScreen();
+   fp = fopen("reminder.dat","a+b");
+   if(fp == NULL)
+   {
+      perror("File can't be opened");
+      return;
+   }
+   printf("\n You can add a reminder of maximum 140 characters.\n");
+   printf("\n Enter the year for which you want to save the reminder : ");
+   scanf("%d",&one.y);
+   printf(" Enter the month for which you want to save the reminder : ");
+   scanf("%d",&one.m);
+   printf(" Enter the date for which you want to save the reminder : ");
+   scanf("%d",&one.d);
+   
+   printf("\n Press . and then enter to stop typing the reminder.");
+   printf("\n Enter the reminder you want to add : ");
+   
+   for(i=0;i<max; i++)
+   {
+      scanf("%c",&one.message[i]);
+      ch = one.message[i];
+      if(ch == '.')
+         break;
+   }
+   fflush(stdin);
+   
+   fwrite(&one, sizeof(one) ,1, fp);
+   printf("\n Reminder added successfully.");
+   fclose(fp);
+   return;
+}
+
+
+void viewReminder()
+{
+   FILE *fp = NULL;
+   int month, date, year, flag = 0;
+   clearScreen();
+   fp = fopen("reminder.dat","rb");
+   if(fp == NULL)
+   {
+      perror("\n No file found");
+      return;
+   }
+   
+   printf("\n Enter the details to view reminder.");
+   printf("\n Enter the year  : ");
+   scanf("%d",&year);
+   printf("\n Enter the month : ");
+   scanf("%d",&month);
+   printf("\n Enter the date  :");
+   scanf("%d",&date);
+   
+   while(fread(&one, sizeof(one), 1, fp) == 1)
+   {
+      if(one.y == year && one.m == month && one.d == date)
+      {
+         printf("Reminder on %d",date);
+         whichMonth(month);
+         printf("%d : ",year);
+         printf(" %s",one.message);  
+         flag = 1;
+         break;
+      }
+   }
+   
+   if(flag == 0)
+      printf("\n No reminder on this date.");
+   fclose(fp);
+   return;
+}
+
+
 
 void choiceExecution()
 {
@@ -262,17 +350,20 @@ void choiceExecution()
          case 3 :nationalHoliday();
                  break;
                  
-         case 4 : 
+         case 4 :addReminder();
                  break;
          
-         case 5: printf("\n End of program.");
+         case 5 :viewReminder();
+                 break;
+         
+         case 6 :printf("\n End of program.");
                  exit(0);
                                                                          
          default: printf("Wrong choice."); 
-                 break;
+                  break;
                                
       }
-      printf("\nDo you wish to continue ? ");
+      printf("\n\n\nDo you wish to continue ? ");
       printf("\nPress y to continue or n to exit.");
       printf("\nEnter choice : ");
       fflush(stdin);
