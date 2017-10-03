@@ -1,4 +1,4 @@
-//this progran runs of linux
+//this progran runs on linux platform
 //program to make a calendar with additional options
 #include<stdio.h>
 #include<stdlib.h>
